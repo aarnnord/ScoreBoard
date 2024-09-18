@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <style>
+        @font-face {
+            font-family: 'LogoFont'; /* Name to reference the font */
+            src: local('Bebas Neue'), url('{{ url_for('static', filename='graphics/BebasNeue-Regular.ttf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'LogoFont';
+            background-color: #f4f4f4;
+            text-align: center;
+            background-image: url("{{ url_for('static', filename='graphics/background.png') }}");
+            position: relative;
+            overflow: hidden; /* Prevent scrollbars caused by the overlay */
+            margin: 0;
+            padding: 0;
+            /*height: 100vh; /* Ensure body takes up full viewport height */
+        }
+        .bg-img {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, #68686862, #000000);
+            opacity: .6;
+            mix-blend-mode: color-burn;
+            z-index: 2;
+        }
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{{ url_for('static', filename='graphics/background.png') }}");
+            background-size:auto;
+            background-position: center;
+            background-repeat:repeat;
+            background-attachment: fixed;
+            z-index: 1;
+        }
+        .scoreboard {
+            display:grid;
+            grid-template-columns: repeat(4, 1fr);
+            /*grid-template-columns: repeat(4, 1fr); /* 4 columns of equal width */
+            grid-column-gap: 10px;
+            grid-row-gap: 50px;
+            justify-content: center; /* Center the grid horizontally */
+            /*height: 100vh; */
+            /*flex-wrap: wrap;*/
+        }
+        .scoreboard-wrapper {
+            display: grid;
+            justify-content: center; /* Center the grid horizontally */
+            /*width: 100%; */
+            position: relative; /* To ensure proper positioning within the body */
+            z-index: 3;
+            /*grid-template-columns: repeat(4, 1fr); /* 4 columns of equal width */
+            padding: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            /*height: 100vh;*/
+        }
+        .team {
+            margin: 10px;
+            padding: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.4);
+            /*background-color: white;*/
+            background-color: rgba(0, 0, 0, 0.4); /* Dark background with 60% opacity */
+            color: white; /* White text for better contrast */
+            border-radius: 10px;
+            width: 100%; /* Responsive width */
+            max-width: 250px; /* Optional: Max width to prevent too large boxes */
+            height: 100%;
+            max-height: 250px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center items horizontally */
+            text-align: center;
+            transition: transform 1.5s ease; /* Smooth transition for movement */
+        }
+        
+        /* Add a class for sorting that will apply a higher z-index */
+        .team.sort {
+            align-content: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1; /* Ensure higher z-index for the highest score */
+        }
+        .team img {
+            max-width: 100px;
+        }
+        .team h2 {
+            font-family:'LogoFont';
+            font-size: 40px;
+            z-index: 4;
+            margin: 5px 0; /* Reduce margin around the name */
+        }
+        .team .score {
+            font-family:'LogoFont';
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0; /* Remove margin around the score */
+        }
+        h1 {
+            font-size: 40px;
+            color: rgb(255, 255, 255);
+            z-index: 5;
+        }
+         /* Optional: Responsive design for smaller screens */
+        @media (max-width: 1000px) {
+            .scoreboard {
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+            }
+            .team {
+                width: 6em;
+                height: 6em;
+            }
+            .team h2 {
+                font-size: 15px;
+            }
+            .team .score {
+                font-size: 10px;
+            }
+            .team img {
+                max-width: 45px;
+            }
+            .scoreboard-wrapper {
+                height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Team Scoreboard</h1>
+    <div class="bg-img"></div>
+
+    <div class="scoreboard-wrapper">
+        <div id="scoreboard" class="scoreboard">
+            <!-- Scoreboard content will be dynamically generated -->
+        </div>
+    </div>
+
+    <script>
+        // Function to update the scoreboard
+        // Function to update the scoreboard
+        function updateScoreboard() {
+            fetch('/get_scores')
+                .then(response => response.json())
+                .then(data => {
+                    const scoreboard = document.getElementById('scoreboard');
+                    scoreboard.innerHTML = '';  // Clear the current scoreboard
+
+                    // Sort teams by score in descending order
+                    data.sort((a, b) => b.score - a.score);
+
+                    // Loop through the teams and update the DOM
+                    data.forEach(team => {
+                        const teamDiv = document.createElement('div');
+                        teamDiv.className = 'team';
+
+                        // Add team logo (using the full static path)
+                        const logo = document.createElement('img');
+                        logo.src = '/static/team_logos/' + team.logo;  // Full static path
+                        teamDiv.appendChild(logo);
+
+                        // Add team name
+                        const name = document.createElement('h2');
+                        name.textContent = team.name;
+                        teamDiv.appendChild(name);
+
+                        // Add team score
+                        const score = document.createElement('p');
+                        score.className = 'score';
+                        score.textContent = 'Score: ' + team.score;
+                        teamDiv.appendChild(score);
+
+                        // Append teamDiv to scoreboard
+                        scoreboard.appendChild(teamDiv);
+                    });
+                });
+        }
+
+        // Update the scoreboard every 5 seconds
+        setInterval(updateScoreboard, 5000);
+
+        // Initial load
+        updateScoreboard();
+    </script>
+</body>
+</html>
