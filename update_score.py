@@ -2,7 +2,7 @@ import requests
 
 def update_score(team_name, new_score):
     # URL for the score update endpoint
-    url = 'http://192.168.1.108:5000/update_score'
+    url = 'http://0.0.0.0:5000/update_score'
     
     # Data to be sent in the request
     data = {
@@ -17,6 +17,7 @@ def update_score(team_name, new_score):
         print(f"Successfully updated {team_name}'s score to {new_score}.")
     else:
         print(f"Failed to update score: {response.json()['error']}")
+    
 
 # Example usage
 if __name__ == '__main__':
@@ -26,3 +27,4 @@ if __name__ == '__main__':
         new_score = int(input("Enter the new score: "))
         
         update_score(team_name, new_score)
+        

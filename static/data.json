@@ -1,0 +1,32 @@
+[
+    {
+        "name": "AISODOI",
+        "logo": "aisodoi2.png",
+        "score": 10
+    },
+    {
+        "name": "MONKEY INTELLIGENCE",
+        "logo": "monkey2.png",
+        "score": 19
+    },
+    {
+        "name": "MAINOSPAIKKA",
+        "logo": "mp2.png",
+        "score": 30
+    },
+    {
+        "name": "TUNKKAAJAT",
+        "logo": "tunkkaajat2.png",
+        "score": 25
+    },
+    {
+        "name": "WTEAMHAMK",
+        "logo": "wth2.png",
+        "score": 0
+    },
+    {
+        "name": "ZERO ONES GIVEN",
+        "logo": "zog2.png",
+        "score": 0
+    }
+]

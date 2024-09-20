@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .team-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .team-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 70%;
+            justify-content: space-between; /* Space between elements */
+        }
+
+        .rank-box, .logo-box, .name-box, .score-box {
+            background-color: rgba(128, 128, 128, 0.7); /* Translucent gray */
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rank-box {
+            width: 40px;
+        }
+
+        .logo-box img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .name-box {
+            flex-grow: 1;
+            padding-left: 20px;
+            padding-right: 20px;
+            text-align: left; /* Align text to the left */
+        }
+
+        .score-box {
+            width: 100px; /* Fixed width for score box */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Team Scoreboard</h1>
+
+    <div class="team-container" id="team-container">
+        <!-- Team rows will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        const teams = [
+            {"name": "AISODOI", "logo": "aisodoi2.png", "score": 8},
+            {"name": "MONKEY INTELLIGENCE", "logo": "monkey2.png", "score": 15},
+            {"name": "MAINOSPAIKKA", "logo": "mp2.png", "score": 12},
+            {"name": "TUNKKAAJAT", "logo": "tunkkaajat2.png", "score": 5},
+            {"name": "WTEAMHAMK", "logo": "wth2.png", "score": 7},
+            {"name": "ZERO ONES GIVEN", "logo": "zog2.png", "score": 10}
+        ];
+
+        // Sort teams by score in descending order
+        teams.sort((a, b) => b.score - a.score);
+
+        // Create and append team rows to the container
+        const container = document.getElementById('team-container');
+
+        teams.forEach((team, index) => {
+            const teamRow = document.createElement('div');
+            teamRow.classList.add('team-row');
+
+            // Rank box
+            const rankBox = document.createElement('div');
+            rankBox.classList.add('rank-box');
+            rankBox.innerText = index + 1; // Rank based on sorted order
+
+            // Logo box
+            const logoBox = document.createElement('div');
+            logoBox.classList.add('logo-box');
+            const logoImg = document.createElement('img');
+            logoImg.src = `static/graphics/${team.logo}`; // Ensure the path is correct
+            logoBox.appendChild(logoImg);
+
+            // Name box
+            const nameBox = document.createElement('div');
+            nameBox.classList.add('name-box');
+            nameBox.innerText = team.name;
+
+            // Score box
+            const scoreBox = document.createElement('div');
+            scoreBox.classList.add('score-box');
+            scoreBox.innerText = `Score: ${team.score}`;
+
+            // Append boxes to the team row
+            teamRow.appendChild(rankBox);
+            teamRow.appendChild(logoBox);
+            teamRow.appendChild(nameBox);
+            teamRow.appendChild(scoreBox); // Add the score box
+
+            // Append the team row to the container
+            container.appendChild(teamRow);
+        });
+    </script>
+</body>
+</html>
+

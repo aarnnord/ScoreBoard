@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <style>
+        @font-face {
+            font-family: 'LogoFont'; /* Name to reference the font */
+            src: local('Bebas Neue'), url('{{ url_for('static', filename='graphics/BebasNeue-Regular.ttf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'LogoFont';
+            background-color: #f4f4f4;
+            text-align: center;
+            background-image: url("{{ url_for('static', filename='graphics/background.png') }}");
+            background-size: cover; /* Ensures the background covers the entire screen */
+            background-position: center; /* Centers the background */
+            background-repeat: no-repeat; /* Prevents tiling */
+            background-attachment: fixed;
+            position: relative;
+            overflow: hidden; /* Prevent scrollbars caused by the overlay */
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Ensure body takes up full viewport height */
+        }
+        .logo-container {
+            margin-top: 150px;        
+        }
+        h1 {
+            font-size: 120px;
+            color: rgb(255, 255, 255);
+            z-index: 5;
+        }
+        .teamcontainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 100px;
+        }
+        .team-row {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 70%;
+            justify-content: space-between; /* Space between elements */
+        }
+
+        .rank-box, .logo-box, .name-box, .score-box {
+            background-color: rgba(128, 128, 128, 0.5); /* Translucent gray */
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 3px;
+        }
+
+        .rank-box {
+            width: 100px;
+            height: 100px;
+        }
+
+        .logo-box img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .name-box {
+            flex-grow: 1;
+            padding-left: 20px;
+            padding-right: 20px;
+            text-align: left; /* Align text to the left */
+            width: 200px;
+            height: 100px;
+        }
+
+        .score-box {
+            width: 100px; /* Fixed width for score box */
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <h1>MI 2024 Scoreboard</h1>
+    </div>
+        <div class="teamcontainer" id="teamcontainer">
+            <!-- Team rows will be inserted here by JavaScript -->
+        </div>
+    <script>
+        function updateScoreboard() {
+            fetch('/get_scores')
+                .then(response => response.json())
+                .then(data => {
+                    const teamcontainer = document.getElementById('teamcontainer');
+                    teamcontainer.innerHTML = '';  // Clear the current scoreboard
+
+                    // Sort teams by score in descending order
+                    data.sort((a, b) => b.score - a.score);
+
+                    // Loop through the teams and update the DOM
+                    data.forEach((team,index) => {
+                        const teamDiv = document.createElement('div');
+                        teamDiv.className = 'team-row';
+                    
+
+                        // Rank box
+                        const rankBox = document.createElement('div');
+                        rankBox.classList.add('rank-box');
+                        rankBox.innerText = index + 1; // Rank based on sorted order
+                        teamDiv.appendChild(rankBox);
+                                         
+
+                        // Logo box
+                        const logoBox = document.createElement('div');
+                        logoBox.classList.add('logo-box');
+                        const logoImg = document.createElement('img');
+                        logoImg.src = 'static/team_logos/' + team.logo; // Ensure the path is correct
+                        logoBox.appendChild(logoImg);
+                        teamDiv.appendChild(logoBox);
+
+                        // Name box
+                        const nameBox = document.createElement('div');
+                        nameBox.classList.add('name-box');
+                        nameBox.innerText = team.name;
+                        teamDiv.appendChild(nameBox);
+
+                        // Score box
+                        const scoreBox = document.createElement('div');
+                        scoreBox.classList.add('score-box');
+                        scoreBox.innerText = 'Score: ' + team.score;
+                        teamDiv.appendChild(scoreBox); // Add the score box             
+                        
+                        // Check if rank is 1 and apply golden color
+                        if (index === 0) { // Since index is zero-based, 0 corresponds to rank 1
+                            rankBox.style.backgroundColor = 'rgba(255, 215, 0, 0.6)'; // Set to golden color
+                            logoBox.style.backgroundColor = 'rgba(255, 215, 0, 0.6)'; // Set to golden color
+                            nameBox.style.backgroundColor = 'rgba(255, 215, 0, 0.6)'; // Set to golden color
+                            scoreBox.style.backgroundColor = 'rgba(255, 215, 0, 0.6)'; // Set to golden color
+                        } else {
+                            rankBox.style.backgroundColor = 'rgba(128, 128, 128, 0.6)'; // Default translucent gray
+                        }       
+
+                        // Append the team row to the container
+                        teamcontainer.appendChild(teamDiv);
+                        
+                    });
+                });
+        }
+
+        // Update the scoreboard every 5 seconds
+        setInterval(updateScoreboard, 5000);
+        
+        // Initial load
+        updateScoreboard();
+    </script>
+</body>
+</html>
